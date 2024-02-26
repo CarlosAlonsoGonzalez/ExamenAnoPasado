@@ -27,7 +27,7 @@ import java.util.ArrayList;
 public class MainBares extends AppCompatActivity {
 
 
-    private static final String INFO_BARES = "info de bares";
+    public static final String INFO_BARES = "info de bares";
     RecyclerView e4rvBares;
     Spinner e4spEstrellas;
     String [] courses = {"Estrellas", "5", "4", "3", "2", "1"};
@@ -89,6 +89,16 @@ public class MainBares extends AppCompatActivity {
                 baresViewModel.generarBares(estrellas);
             }
 
+        });
+
+        baresAdapter.setClickListener(new BaresAdapter.ItemClickListener() {
+            @Override
+            public void onClick(View view, int position, Bares unBar) {
+                Intent i = new Intent(MainBares.this, BaresDetalles.class);//no se si esto funciona la verdad eh esta apañado por los pelos y sin sentido
+                i.putExtra(MainBares.INFO_BARES,unBar);
+
+                startActivity(i);
+            }
         });
     }
 

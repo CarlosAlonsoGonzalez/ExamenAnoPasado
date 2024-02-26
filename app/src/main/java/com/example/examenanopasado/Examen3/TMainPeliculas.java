@@ -46,6 +46,19 @@ public class TMainPeliculas extends AppCompatActivity {
         ad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         e3spEstrellas.setAdapter(ad);
         int position = e3spEstrellas.getSelectedItemPosition();
+        e3rvPeliculas.setLayoutManager(new LinearLayoutManager(TMainPeliculas.this.getApplicationContext()));
+
+        peliculasAdapter = new TPeliculasAdapter(new ArrayList<>());
+
+        e3rvPeliculas.setAdapter(peliculasAdapter);
+
+        // Inicializa y observa los cambios en el ViewModel
+        peliculaViewModel = new ViewModelProvider(TMainPeliculas.this).get(TPeliculaViewModel.class);
+        peliculaViewModel.getPeliculas(estrellas).observe(TMainPeliculas.this, peliculas -> {
+            // Actualiza los datos del adaptador cuando cambia la lista de consejos en el ViewModel
+            e3pbCargando.setVisibility(View.INVISIBLE);
+            peliculasAdapter.setTPeliculas(peliculas);
+        });
         e3spEstrellas.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -64,24 +77,25 @@ public class TMainPeliculas extends AppCompatActivity {
                 switch (i){
                     case 1:
                         estrellas = 5;
-                        cogerInfo(estrellas);
                         break;
                     case 2:
                         estrellas = 4;
-                        cogerInfo(estrellas);
                         break;
                     case 3:
                         estrellas = 3;
-                        cogerInfo(estrellas);
                         break;
                     case 4:
                         estrellas = 2;
-                        cogerInfo(estrellas);
                         break;
                     case 5:
                         estrellas = 1;
-                        cogerInfo(estrellas);
                         break;
+                    default:
+                        estrellas = 0;
+                        break;
+                }
+                if(estrellas!=0){
+                    peliculaViewModel.generarPeliculas(estrellas);
                 }
 
             }
@@ -91,24 +105,6 @@ public class TMainPeliculas extends AppCompatActivity {
                 return;
             }
         });
-
-    }
-
-    public void cogerInfo(int numEsrellas){
-        e3rvPeliculas.setLayoutManager(new LinearLayoutManager(TMainPeliculas.this.getApplicationContext()));
-
-        peliculasAdapter = new TPeliculasAdapter(new ArrayList<>());
-
-        e3rvPeliculas.setAdapter(peliculasAdapter);
-
-        // Inicializa y observa los cambios en el ViewModel
-        peliculaViewModel = new ViewModelProvider(TMainPeliculas.this).get(TPeliculaViewModel.class);
-        peliculaViewModel.getPeliculas(estrellas).observe(TMainPeliculas.this, peliculas -> {
-            // Actualiza los datos del adaptador cuando cambia la lista de consejos en el ViewModel
-            e3pbCargando.setVisibility(View.INVISIBLE);
-            peliculasAdapter.setTPeliculas(peliculas);
-        });
-
         peliculasAdapter.setClickListener(new TPeliculasAdapter.ItemClickListener() {
             @Override
             public void onClick(View view, int position, TPelicula unaPelicula) {
@@ -118,5 +114,7 @@ public class TMainPeliculas extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
     }
+
 }
